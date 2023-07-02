@@ -52,7 +52,10 @@ known_words_state()
 unknown_words_state()
 if st.session_state.word_index > len(list(data.index)) - 1:
     st.write(f"You know {st.session_state.known} out of {total} words")
-    st.write(f"The words you didn't know: **{', '.join(st.session_state.unknown_list)}**")
+    if st.session_state.unknown_list:
+        st.write(f"The words you didn't know: **{', '.join(st.session_state.unknown_list)}**")
+    else:
+        st.write("Congrats! :tada: You know all the words!")
     restart = st.button("Restart")
     if restart:
         reinit_word_index()
@@ -75,7 +78,11 @@ else:
             st.session_state.known += 1
             st.session_state.word_index += 1
         elif no_button:
-            st.write("You will need to go back to this word")
+            prev_french_word = data.at[max(0, st.session_state.word_index - 1), "French"]
+            english_word = data.at[max(0, st.session_state.word_index - 1), "English"]
+            st.write(f"You will need to go back to this word.")
+            with st.expander("Show previous word translation"):
+                st.write(f"**{prev_french_word}** is in English: **{english_word}**")
             st.session_state.unknown_list.append(word)
             st.session_state.word_index += 1
         else:
